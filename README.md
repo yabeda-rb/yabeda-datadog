@@ -1,12 +1,13 @@
-# Yabeda::Datadog
+# Yabeda Datadog adapter
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/yabeda/datadog`. To experiment with that code, run `bin/console` for an interactive prompt.
+[Yabeda](https://github.com/yabeda-rb/yabeda) adapter for easy exporting collected custom metrics from your application to the Datadog API.
 
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
-Add this line to your application's Gemfile:
+This adapter send metrics to [Datadog API](https://docs.datadoghq.com/api/?lang=ruby) and requires to have and Datadog account with API key. You can obtain your Datadog API key in [Datadog dashboard](https://app.datadoghq.com/account/settings#api). For more information refer to [API documentation](https://docs.datadoghq.com/api/?lang=ruby#authentication).
+
+Add line to your application's Gemfile:
 
 ```ruby
 gem 'yabeda-datadog'
@@ -16,13 +17,19 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install yabeda-datadog
-
 ## Usage
 
-TODO: Write usage instructions here
+Require this adapter before Yabeda configuration:
+
+```ruby
+require "yabeda/datadog"
+```
+
+Refer to [Yabeda documentation](https://github.com/yabeda-rb/yabeda) for instruction how to configure and use Yabeda.
+
+Refer to [Datadog metrics documentation](https://docs.datadoghq.com/graphing/metrics/) for working with your metrics in Datadog dashboard.
+
+Please note that configuring Yabeda you have to use Datadog units. Refer to [Datadog unit for metrics documentation](https://docs.datadoghq.com/developers/metrics/#units).
 
 ## Development
 
@@ -32,7 +39,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/yabeda-datadog.
+Bug reports and pull requests are welcome on GitHub at https://github.com/shvetsovdm/yabeda-datadog.
 
 ## License
 
