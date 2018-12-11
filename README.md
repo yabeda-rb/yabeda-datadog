@@ -5,7 +5,7 @@
 
 ## Installation
 
-This adapter send metrics to [Datadog API](https://docs.datadoghq.com/api/?lang=ruby) and requires to have and Datadog account with API key. You can obtain your Datadog API key in [Datadog dashboard](https://app.datadoghq.com/account/settings#api). For more information refer to [API documentation](https://docs.datadoghq.com/api/?lang=ruby#authentication).
+This adapter sends metrics to [Datadog API](https://docs.datadoghq.com/api/?lang=ruby) and requires you to have a Datadog account with API key and application key. You can obtain your Datadog API keys in [Datadog dashboard](https://app.datadoghq.com/account/settings#api). For more information refer to [API documentation](https://docs.datadoghq.com/api/?lang=ruby#authentication).
 
 Add line to your application's Gemfile:
 
