@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "dogapi"
+  spec.add_dependency "dogstatsd-ruby"
   spec.add_dependency "yabeda"
 
   spec.add_development_dependency "bundler", "~> 1.17"

@@ -3,15 +3,15 @@
 require "bundler/setup"
 require "yabeda/datadog"
 
-# Put Datadog an API key in DATADOG_API_KEY env variable
-# and appliction key in DATADOG_APP_KEY env variable.
-# Refer to Datadog integrations dashboard for an API key
+Thread.abort_on_exception = true
 
 # To Use this script execute it directly with ruby command.
+# You have to provide DATADOG_API_KEY and DATADOG_APP_KEY
+# environment variables.
 #
 # Example:
 #
-#   DATADOG_API_KEY="your-datadog-api-key-here" ruby script.rb
+#   DATADOG_API_KEY=<your API key> DATADOG_APP_KEY=<your app key> ruby script.rb
 #
 
 Yabeda.configure do
@@ -21,6 +21,6 @@ Yabeda.configure do
 end
 
 start_time = Time.now
-Yabeda.yabeda_datadog_gem_examples_script_run_count.increment(device: "developent_computer")
+Yabeda.yabeda_datadog_gem_examples_script_run_count.increment(host: "dev_machine")
 finish_time = Time.now
-Yabeda.yabeda_datadog_gem_examples_script_run_time.set({ device: "developent_computer" }, finish_time - start_time)
+Yabeda.yabeda_datadog_gem_examples_script_run_time.set({ host: "dev_machine" }, finish_time - start_time)

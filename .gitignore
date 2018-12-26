@@ -9,3 +9,6 @@
 
 # rspec failure tracking
 .rspec_status
+
+# environment files
+.datadog-agent.env

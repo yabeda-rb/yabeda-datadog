@@ -13,4 +13,15 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.before(:each, fake_thread: true) do
+    allow(Thread).to receive(:new).and_yield
+  end
+
+  config.around(:each, fake_thread: true) do |example|
+    prev_flag = Thread.abort_on_exception
+    Thread.abort_on_exception = true
+    example.run
+    Thread.abort_on_exception = prev_flag
+  end
 end
