@@ -32,7 +32,14 @@ You can obtain your Datadog API keys in [Datadog dashboard](https://app.datadogh
 
 You may specify `DATADOG_AGENT_HOST` and/or `DATADOG_AGENT_PORT` environment variables if your Datadog agent is run not in the same host as an app/code that you collection metrics.
 
-You may specify `YABEDA_DATADOG_COLLECT_INTERVAL` environment variable to change default interval to call Yabeda collect blocks (aka collectors).
+To star collecting Yabeda collect blocks (aka collectors) run the command:
+
+```ruby
+Yabeda::Datadog.start_exporter
+
+```
+
+You may specify `YABEDA_DATADOG_COLLECT_INTERVAL` environment variable to change default interval to call Yabeda collect blocks.
 
 ### Limitations
 
