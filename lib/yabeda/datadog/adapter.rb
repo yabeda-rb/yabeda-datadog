@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "yabeda/datadog/worker"
 require "yabeda/datadog/metric"
 require "yabeda/datadog/tags"
 require "yabeda/base_adapter"
@@ -16,55 +17,50 @@ module Yabeda
     # Sends yabeda metrics as custom metrics to DataDog API.
     # https://docs.datadoghq.com/integrations/ruby/
     class Adapter < BaseAdapter
+      def initialize(worker: Worker.new)
+        @worker = worker
+      end
+
       def register_counter!(counter)
         metric = Metric.new(counter, "counter")
-        Thread.new { metric.update(dogapi) }
+        worker.enqueue(:register, metric: metric)
       end
 
       def perform_counter_increment!(counter, tags, increment)
-        metric = Metric.new(counter, "counter")
-        dogstatsd.count(metric.name, increment, tags: Tags.build(tags))
+        worker.enqueue(:send,
+                       metric: Metric.new(counter, "counter"),
+                       value: increment,
+                       tags: Tags.build(tags),)
       end
 
       def register_gauge!(gauge)
         metric = Metric.new(gauge, "gauge")
-        Thread.new { metric.update(dogapi) }
+        worker.enqueue(:register, metric: metric)
       end
 
       def perform_gauge_set!(gauge, tags, value)
-        metric = Metric.new(gauge, "gauge")
-        dogstatsd.gauge(metric.name, value, tags: Tags.build(tags))
+        worker.enqueue(:send,
+                       metric: Metric.new(gauge, "gauge"),
+                       value: value,
+                       tags: Tags.build(tags),)
       end
 
       def register_histogram!(histogram)
-        # sending many requests in separate threads
-        # cause rejections by Datadog API
-        Thread.new do
-          histogram_metrics(histogram).map do |historgam_sub_metric|
-            historgam_sub_metric.update(dogapi)
-          end
+        histogram_metrics(histogram).map do |historgam_sub_metric|
+          worker.enqueue(:register, metric: historgam_sub_metric)
         end
       end
 
       def perform_histogram_measure!(historam, tags, value)
-        metric = Metric.new(historam, "histogram")
-        dogstatsd.histogram(metric.name, value, tags: Tags.build(tags))
+        worker.enqueue(:send,
+                       metric: Metric.new(historam, "histogram"),
+                       value: value,
+                       tags: Tags.build(tags),)
       end
 
       private
 
-      def dogstatsd
-        # consider memoization here
-        ::Datadog::Statsd.new(
-          ENV.fetch("DATADOG_AGENT_HOST", DEFAULT_AGENT_HOST),
-          ENV.fetch("DATADOG_AGENT_PORT", DEFAULT_AGENT_PORT),
-        )
-      end
-
-      def dogapi
-        # consider memoization here
-        ::Dogapi::Client.new(ENV["DATADOG_API_KEY"], ENV["DATADOG_APP_KEY"])
-      end
+      attr_reader :worker
 
       def histogram_metrics(historgram)
         [
@@ -76,8 +72,6 @@ module Yabeda
           Metric.new(historgram, "rate", name_sufix: "count", unit: nil, per_unit: nil),
         ]
       end
-
-      Yabeda.register_adapter(:datadog, new)
     end
   end
 end
