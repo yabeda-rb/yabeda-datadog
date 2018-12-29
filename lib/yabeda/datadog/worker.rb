@@ -9,32 +9,6 @@ module Yabeda
       SLEEP_INTERVAL = 5 # TODO: think twice about it
       DEFAULT_AGENT_HOST = "localhost"
       DEFAULT_AGENT_PORT = 8125
-      ACTIONS = {
-        send: proc do |payload|
-          puts "sending metric"
-
-          metric = payload.fetch(:metric)
-          value = payload.fetch(:value)
-          tags = payload.fetch(:tags)
-
-          puts "value: #{value}"
-
-          dogstatsd = ::Datadog::Statsd.new(
-            ENV.fetch("DATADOG_AGENT_HOST", DEFAULT_AGENT_HOST),
-            ENV.fetch("DATADOG_AGENT_PORT", DEFAULT_AGENT_PORT),
-          )
-
-          dogstatsd.send(metric.type, metric.name, value, tags: tags)
-        end,
-
-        register: proc do |payload|
-          puts "updating metadata"
-
-          dogapi = ::Dogapi::Client.new(ENV["DATADOG_API_KEY"], ENV["DATADOG_APP_KEY"])
-          metric = payload.fetch(:metric)
-          metric.update(dogapi)
-        end,
-      }.freeze
 
       def self.start(queue_size: QUEUE_SIZE)
         puts "start worker"
@@ -81,12 +55,48 @@ module Yabeda
       attr_reader :queue, :threads
 
       def dispatch_actions
-        puts "going to dispatch actions in thread #{Thread.current.object_id}"
+        puts "going to dispatch actions in thread #{Thread.current.object_id}, queue size #{queue.size}"
+        send = []
+        register = []
+
         until no_acitons?
-          puts "dispatch next action in thread #{Thread.current.object_id}"
-          action_key, payload = dequeue_action
-          action = self.class::ACTIONS[action_key]
-          action.call(payload)
+          action_key, action_payload = dequeue_action
+          case action_key
+          when :send then send.push(action_payload)
+          when :register then register.push(action_payload)
+          end
+        end
+
+        if send.any?
+          puts "sending next set of metrics in thread #{Thread.current.object_id}"
+          dogstatsd = ::Datadog::Statsd.new(
+            ENV.fetch("DATADOG_AGENT_HOST", DEFAULT_AGENT_HOST),
+            ENV.fetch("DATADOG_AGENT_PORT", DEFAULT_AGENT_PORT),
+          )
+
+          dogstatsd.batch do |stats|
+            send.each do |payload|
+              puts "sending metric"
+
+              metric = payload.fetch(:metric)
+              value = payload.fetch(:value)
+              tags = payload.fetch(:tags)
+
+              puts "value: #{value}"
+
+              stats.send(metric.type, metric.name, value, tags: tags)
+            end
+          end
+        end
+
+        if register.any?
+          puts "updating next set of metrics in thread #{Thread.current.object_id}"
+          dogapi = ::Dogapi::Client.new(ENV["DATADOG_API_KEY"], ENV["DATADOG_APP_KEY"])
+
+          register.each do |payload|
+            metric = payload.fetch(:metric)
+            metric.update(dogapi)
+          end
         end
       end
 
