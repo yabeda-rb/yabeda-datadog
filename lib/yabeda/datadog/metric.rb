@@ -12,6 +12,8 @@ module Yabeda
         @overides = overides
       end
 
+      attr_reader :type
+
       # Datadog API argument
       def metadata
         {
@@ -50,7 +52,7 @@ module Yabeda
 
       private
 
-      attr_reader :metric, :type, :overides
+      attr_reader :metric, :overides
     end
   end
 end

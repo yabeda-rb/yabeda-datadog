@@ -8,7 +8,7 @@ RSpec.describe Yabeda::Datadog::Adapter do
   describe "#register_counter!" do
     it "enqueued update a counter metric" do
       yabeda_metric = instance_double("Yabeda::Counter")
-      allow(Yabeda::Datadog::Metric).to receive(:new).with(yabeda_metric, "counter").and_return(metric)
+      allow(Yabeda::Datadog::Metric).to receive(:new).with(yabeda_metric, "count").and_return(metric)
       adapter.register_counter!(yabeda_metric)
       expect(worker).to have_received(:enqueue).with(:register, metric: metric)
     end
@@ -38,7 +38,7 @@ RSpec.describe Yabeda::Datadog::Adapter do
 
     it "enqueued send a counter metric" do
       yabeda_metric = instance_double("Yabeda::Counter")
-      allow(Yabeda::Datadog::Metric).to receive(:new).with(yabeda_metric, "counter").and_return(metric)
+      allow(Yabeda::Datadog::Metric).to receive(:new).with(yabeda_metric, "count").and_return(metric)
       adapter.perform_counter_increment!(yabeda_metric, yabeda_empty_tags, 1)
       expect(worker).to have_received(:enqueue).with(:send, metric: metric, value: 1, tags: [])
     end

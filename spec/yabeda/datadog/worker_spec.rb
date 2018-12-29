@@ -35,12 +35,19 @@ RSpec.describe Yabeda::Datadog::Worker do
       expect(Thread).to have_received(:new).exactly(5).times
     end
 
-    it "calls dispatch_actions in each thread" do
-      allow(worker).to receive(:dispatch_actions)
-      worker.spawn_threads(2)
+    it "dispatches enqueued actions" do
+      allow(described_class::ACTIONS[:send]).to receive(:call)
+      allow(described_class::ACTIONS[:register]).to receive(:call)
+      worker.enqueue(:send, a: 1)
+      worker.enqueue(:send, b: 2)
+      worker.enqueue(:register, name: :a)
+
+      worker.spawn_threads(1)
       sleep(0.1)
-      expect(worker).to have_received(:dispatch_actions).at_least(:twice).with(no_args)
-      worker.stop
+
+      expect(described_class::ACTIONS[:send]).to have_received(:call).with(a: 1)
+      expect(described_class::ACTIONS[:send]).to have_received(:call).with(b: 2)
+      expect(described_class::ACTIONS[:register]).to have_received(:call).with(name: :a)
     end
 
     it "returns true" do
@@ -64,7 +71,7 @@ RSpec.describe Yabeda::Datadog::Worker do
     it "terminates all threads" do
       allow(Thread).to receive(:new).and_return(fake_thread)
       worker.spawn_threads(4)
-      p worker.stop
+      worker.stop
       expect(fake_thread).to have_received(:exit).exactly(4).times
     end
 
