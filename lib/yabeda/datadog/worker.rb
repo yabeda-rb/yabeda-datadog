@@ -11,7 +11,7 @@ module Yabeda
       DEFAULT_AGENT_PORT = 8125
 
       def self.start(queue_size: QUEUE_SIZE)
-        puts "start worker"
+        Logger.instance.write "start worker"
         instance = new(SizedQueue.new(queue_size))
         instance.spawn_threads(NUM_THREADS)
         instance
@@ -20,10 +20,11 @@ module Yabeda
       def initialize(queue)
         @queue = queue
         @threads = []
+        @logger = Logger.instance
       end
 
       def enqueue(action, payload)
-        puts "enqueue action"
+        logger.write "enqueue action"
         queue.push([action, payload])
       end
 
@@ -52,10 +53,10 @@ module Yabeda
 
       private
 
-      attr_reader :queue, :threads
+      attr_reader :queue, :threads, :logger
 
       def dispatch_actions
-        puts "going to dispatch actions in thread #{Thread.current.object_id}, queue size #{queue.size}"
+        logger.write "going to dispatch actions in thread #{Thread.current.object_id}, queue size #{queue.size}"
         send = []
         register = []
 
@@ -68,7 +69,7 @@ module Yabeda
         end
 
         if send.any?
-          puts "sending next set of metrics in thread #{Thread.current.object_id}"
+          logger.write "sending next set of metrics in thread #{Thread.current.object_id}"
           dogstatsd = ::Datadog::Statsd.new(
             ENV.fetch("DATADOG_AGENT_HOST", DEFAULT_AGENT_HOST),
             ENV.fetch("DATADOG_AGENT_PORT", DEFAULT_AGENT_PORT),
@@ -76,26 +77,26 @@ module Yabeda
 
           dogstatsd.batch do |stats|
             send.each do |payload|
-              puts "sending metric"
-
               metric = payload.fetch(:metric)
               value = payload.fetch(:value)
               tags = payload.fetch(:tags)
 
-              puts "value: #{value}"
-
-              stats.send(metric.type, metric.name, value, tags: tags)
+              logger.log_request metric do
+                stats.send(metric.type, metric.name, value, tags: tags)
+              end
             end
           end
         end
 
         if register.any?
-          puts "updating next set of metrics in thread #{Thread.current.object_id}"
-          dogapi = ::Dogapi::Client.new(ENV["DATADOG_API_KEY"], ENV["DATADOG_APP_KEY"])
+          logger.write "updating next set of metrics in thread #{Thread.current.object_id}"
+          dogapi = ::Dogapi::Client.new('b62b7b523bf06ec87743f8e29ed17569', ENV["DATADOG_APP_KEY"])
 
           register.each do |payload|
             metric = payload.fetch(:metric)
-            metric.update(dogapi)
+            logger.log_request metric do
+              metric.update(dogapi)
+            end
           end
         end
       end
