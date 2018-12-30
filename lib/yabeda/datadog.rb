@@ -3,6 +3,7 @@
 require "yabeda"
 require "yabeda/datadog/adapter"
 require "yabeda/datadog/version"
+require "yabeda/datadog/exceptions"
 
 module Yabeda
   # = Namespace for DataDog adapter
@@ -12,6 +13,7 @@ module Yabeda
 
     # TODO: consider to change too manual
     def self.start
+      raise ApiKeyError, 'DataDog API key or application key not set to envoirmental variable' if ENV['DATADOG_API_KEY'].nil? || ENV['DATADOG_APP_KEY'].nil?
       adapter = Yabeda::Datadog::Adapter.new
       Yabeda.register_adapter(:datadog, adapter)
       adapter
