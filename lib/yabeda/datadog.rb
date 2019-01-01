@@ -13,7 +13,8 @@ module Yabeda
 
     # TODO: consider to change too manual
     def self.start
-      raise ApiKeyError, 'DataDog API key or application key not set to envoirmental variable' if ENV['DATADOG_API_KEY'].nil? || ENV['DATADOG_APP_KEY'].nil?
+      raise ApiKeyError if ENV['DATADOG_API_KEY'].nil?
+      raise AppKeyError if ENV['DATADOG_APP_KEY'].nil?
       adapter = Yabeda::Datadog::Adapter.new
       Yabeda.register_adapter(:datadog, adapter)
       adapter
