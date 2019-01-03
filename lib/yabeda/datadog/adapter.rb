@@ -14,7 +14,7 @@ module Yabeda
 
     # = DataDog adapter.
     #
-    # Sends yabeda metrics as custom metrics to DataDog API.
+    # Sends yabeda metrics as custom metrics to DataDog.
     # https://docs.datadoghq.com/integrations/ruby/
     class Adapter < BaseAdapter
       def initialize(worker: Worker.start)
@@ -42,7 +42,7 @@ module Yabeda
       end
 
       def register_histogram!(histogram)
-        histogram_metrics(histogram).map do |historgam_sub_metric|
+        Metric.histogram_metrics(histogram).map do |historgam_sub_metric|
           enqueue_register(historgam_sub_metric)
         end
       end
@@ -67,17 +67,6 @@ module Yabeda
 
       def enqueue_send(metric, value, tags)
         worker.enqueue(:SEND, metric: metric, value: value, tags: tags)
-      end
-
-      def histogram_metrics(historgram)
-        [
-          Metric.new(historgram, "gauge", name_sufix: "avg"),
-          Metric.new(historgram, "gauge", name_sufix: "max"),
-          Metric.new(historgram, "gauge", name_sufix: "min"),
-          Metric.new(historgram, "gauge", name_sufix: "median"),
-          Metric.new(historgram, "gauge", name_sufix: "95percentile", unit: nil, per_unit: nil),
-          Metric.new(historgram, "rate", name_sufix: "count", unit: nil, per_unit: nil),
-        ]
       end
     end
   end
