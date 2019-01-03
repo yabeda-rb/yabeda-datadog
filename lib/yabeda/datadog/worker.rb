@@ -5,7 +5,7 @@ require "yabeda/datadog/worker/register"
 
 module Yabeda
   module Datadog
-    # = Perform synchronous actions
+    # = Perform actions async
     class Worker
       BATCH_SIZE = 10
       QUEUE_SIZE = 1000
