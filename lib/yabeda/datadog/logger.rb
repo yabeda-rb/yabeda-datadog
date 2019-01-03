@@ -15,16 +15,36 @@ module Yabeda
 
       def log_request(metric, &block)
         begin
-          @logger.info "Sending #{metric.name} metric"
+          info "Sending #{metric.name} metric"
           result = handle_result(yield)
-          @logger.info "Response on #{metric.name}: #{result}"
+          info "Response on #{metric.name}: #{result}"
         rescue StandardError => e  
-          @logger.fatal "Metric sending was failed: #{e.message}"
+          fatal "Metric sending was failed: #{e.message}"
         end
       end
 
-      def write(message)
+      def warn(message)
+        @logger.warn message
+      end
+
+      def info(message)
         @logger.info message
+      end
+
+      def debug(message)
+        @logger.debug message
+      end
+
+      def fatal(message)
+        @logger.fatal message
+      end
+
+      def error(message)
+        @logger.error message
+      end
+
+      def level=(level)
+        @logger.level = level
       end
 
       private

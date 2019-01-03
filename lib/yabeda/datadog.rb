@@ -20,11 +20,11 @@ module Yabeda
 
     def self.start_exporter(collect_interval: COLLECT_INTERVAL)
       Thread.new do
-        Logger.instance.write "initilize collectors harvest"
+        Logger.instance.info "initilize collectors harvest"
         loop do
-          Logger.instance.write "start collectors harvest"
+          Logger.instance.info "start collectors harvest"
           Yabeda.collectors.each(&:call)
-          Logger.instance.write "end collectors harvest"
+          Logger.instance.info "end collectors harvest"
           sleep(collect_interval)
         end
       end

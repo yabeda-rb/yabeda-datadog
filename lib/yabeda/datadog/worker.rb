@@ -11,7 +11,7 @@ module Yabeda
       DEFAULT_AGENT_PORT = 8125
 
       def self.start(queue_size: QUEUE_SIZE)
-        Logger.instance.write "start worker"
+        Logger.instance.info "start worker"
         instance = new(SizedQueue.new(queue_size))
         instance.spawn_threads(NUM_THREADS)
         instance
@@ -24,7 +24,7 @@ module Yabeda
       end
 
       def enqueue(action, payload)
-        logger.write "enqueue action"
+        logger.info "enqueue action"
         queue.push([action, payload])
       end
 
@@ -56,7 +56,7 @@ module Yabeda
       attr_reader :queue, :threads, :logger
 
       def dispatch_actions
-        logger.write "going to dispatch actions in thread #{Thread.current.object_id}, queue size #{queue.size}"
+        logger.info "going to dispatch actions in thread #{Thread.current.object_id}, queue size #{queue.size}"
         send = []
         register = []
 
@@ -69,7 +69,7 @@ module Yabeda
         end
 
         if send.any?
-          logger.write "sending next set of metrics in thread #{Thread.current.object_id}"
+          logger.info "sending next set of metrics in thread #{Thread.current.object_id}"
           dogstatsd = ::Datadog::Statsd.new(
             ENV.fetch("DATADOG_AGENT_HOST", DEFAULT_AGENT_HOST),
             ENV.fetch("DATADOG_AGENT_PORT", DEFAULT_AGENT_PORT),
@@ -89,7 +89,7 @@ module Yabeda
         end
 
         if register.any?
-          logger.write "updating next set of metrics in thread #{Thread.current.object_id}"
+          logger.info "updating next set of metrics in thread #{Thread.current.object_id}"
           dogapi = ::Dogapi::Client.new('b62b7b523bf06ec87743f8e29ed17569', ENV["DATADOG_APP_KEY"])
 
           register.each do |payload|
