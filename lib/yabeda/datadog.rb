@@ -4,6 +4,7 @@ require "yabeda"
 require "yabeda/datadog/adapter"
 require "yabeda/datadog/version"
 require "yabeda/datadog/exceptions"
+require "yabeda/datadog/logger"
 
 module Yabeda
   # = Namespace for DataDog adapter
@@ -22,8 +23,11 @@ module Yabeda
 
     def self.start_exporter(collect_interval: COLLECT_INTERVAL)
       Thread.new do
+        Logger.instance.info "initilize collectors harvest"
         loop do
+          Logger.instance.info "start collectors harvest"
           Yabeda.collectors.each(&:call)
+          Logger.instance.info "end collectors harvest"
           sleep(collect_interval)
         end
       end

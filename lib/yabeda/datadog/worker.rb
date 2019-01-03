@@ -13,6 +13,7 @@ module Yabeda
       SLEEP_INTERVAL = 3
 
       def self.start(queue_size: QUEUE_SIZE)
+        Logger.instance.info "start worker"
         instance = new(SizedQueue.new(queue_size))
         instance.spawn_threads(NUM_THREADS)
         instance
@@ -21,9 +22,11 @@ module Yabeda
       def initialize(queue)
         @queue = queue
         @threads = []
+        @logger = Logger.instance
       end
 
       def enqueue(action, payload)
+        logger.info "enqueue action"
         queue.push([action, payload])
       end
 
@@ -52,7 +55,7 @@ module Yabeda
 
       private
 
-      attr_reader :queue, :threads
+      attr_reader :queue, :threads, :logger
 
       def dispatch_actions
         grouped_actions = Hash.new { |hash, key| hash[key] = [] }
