@@ -17,8 +17,9 @@ module Yabeda
             metric = payload.fetch(:metric)
             value = payload.fetch(:value)
             tags = payload.fetch(:tags)
-
-            stats.send(metric.type, metric.name, value, tags: tags)
+            Logger.instance.log_request metric do
+              stats.send(metric.type, metric.name, value, tags: tags)
+            end
           end
         end
       end
