@@ -22,40 +22,35 @@ module Yabeda
       end
 
       def register_counter!(counter)
-        metric = Metric.new(counter, "count")
-        worker.enqueue(:REGISTER, metric: metric)
+        enqueue_register(Metric.new(counter, "count"))
       end
 
       def perform_counter_increment!(counter, tags, increment)
-        worker.enqueue(:SEND,
-                       metric: Metric.new(counter, "count"),
-                       value: increment,
-                       tags: Tags.build(tags),)
+        metric = Metric.new(counter, "count")
+        tags = Tags.build(tags)
+        enqueue_send(metric, increment, tags)
       end
 
       def register_gauge!(gauge)
-        metric = Metric.new(gauge, "gauge")
-        worker.enqueue(:REGISTER, metric: metric)
+        enqueue_register(Metric.new(gauge, "gauge"))
       end
 
       def perform_gauge_set!(gauge, tags, value)
-        worker.enqueue(:SEND,
-                       metric: Metric.new(gauge, "gauge"),
-                       value: value,
-                       tags: Tags.build(tags),)
+        metric = Metric.new(gauge, "gauge")
+        tags = Tags.build(tags)
+        enqueue_send(metric, value, tags)
       end
 
       def register_histogram!(histogram)
         histogram_metrics(histogram).map do |historgam_sub_metric|
-          worker.enqueue(:REGISTER, metric: historgam_sub_metric)
+          enqueue_register(historgam_sub_metric)
         end
       end
 
       def perform_histogram_measure!(historam, tags, value)
-        worker.enqueue(:SEND,
-                       metric: Metric.new(historam, "histogram"),
-                       value: value,
-                       tags: Tags.build(tags),)
+        metric = Metric.new(historam, "histogram")
+        tags = Tags.build(tags)
+        enqueue_send(metric, value, tags)
       end
 
       def stop
@@ -65,6 +60,14 @@ module Yabeda
       private
 
       attr_reader :worker
+
+      def enqueue_register(metric)
+        worker.enqueue(:REGISTER, metric: metric)
+      end
+
+      def enqueue_send(metric, value, tags)
+        worker.enqueue(:SEND, metric: metric, value: value, tags: tags)
+      end
 
       def histogram_metrics(historgram)
         [
