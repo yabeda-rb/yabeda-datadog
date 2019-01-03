@@ -23,11 +23,11 @@ module Yabeda
 
       def register_counter!(counter)
         metric = Metric.new(counter, "count")
-        worker.enqueue(:register, metric: metric)
+        worker.enqueue(:REGISTER, metric: metric)
       end
 
       def perform_counter_increment!(counter, tags, increment)
-        worker.enqueue(:send,
+        worker.enqueue(:SEND,
                        metric: Metric.new(counter, "count"),
                        value: increment,
                        tags: Tags.build(tags),)
@@ -35,11 +35,11 @@ module Yabeda
 
       def register_gauge!(gauge)
         metric = Metric.new(gauge, "gauge")
-        worker.enqueue(:register, metric: metric)
+        worker.enqueue(:REGISTER, metric: metric)
       end
 
       def perform_gauge_set!(gauge, tags, value)
-        worker.enqueue(:send,
+        worker.enqueue(:SEND,
                        metric: Metric.new(gauge, "gauge"),
                        value: value,
                        tags: Tags.build(tags),)
@@ -47,12 +47,12 @@ module Yabeda
 
       def register_histogram!(histogram)
         histogram_metrics(histogram).map do |historgam_sub_metric|
-          worker.enqueue(:register, metric: historgam_sub_metric)
+          worker.enqueue(:REGISTER, metric: historgam_sub_metric)
         end
       end
 
       def perform_histogram_measure!(historam, tags, value)
-        worker.enqueue(:send,
+        worker.enqueue(:SEND,
                        metric: Metric.new(historam, "histogram"),
                        value: value,
                        tags: Tags.build(tags),)

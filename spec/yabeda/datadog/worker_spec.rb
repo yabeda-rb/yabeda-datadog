@@ -20,8 +20,8 @@ RSpec.describe Yabeda::Datadog::Worker do
     let(:worker) { described_class.new(queue) }
 
     it "adds action and payload to queue" do
-      worker.enqueue(:send, data: 1)
-      expect(queue.pop).to eq([:send, { data: 1 }])
+      worker.enqueue(:SEND, data: 1)
+      expect(queue.pop).to eq([:SEND, { data: 1 }])
     end
   end
 
@@ -38,17 +38,15 @@ RSpec.describe Yabeda::Datadog::Worker do
     it "dispatches enqueued actions" do
       allow(described_class::SEND).to receive(:call)
       allow(described_class::REGISTER).to receive(:call)
-      worker.enqueue(:send, a: 1)
-      worker.enqueue(:send, b: 2)
-      worker.enqueue(:register, name: :a)
+      worker.enqueue(:SEND, a: 1)
+      worker.enqueue(:SEND, b: 2)
+      worker.enqueue(:REGISTER, name: :a)
 
       worker.spawn_threads(3)
       sleep(0.1)
 
-      expect(described_class::SEND).to have_received(:call)
-      expect(described_class::REGISTER).to have_received(:call)
-      # expect(described_class::SEND).to have_received(:call).with([{ a: 1 }, { b: 2 }])
-      # expect(described_class::REGISTER).to have_received(:call).with([{ name: :a }])
+      expect(described_class::SEND).to have_received(:call).with([{ a: 1 }, { b: 2 }])
+      expect(described_class::REGISTER).to have_received(:call).with([{ name: :a }])
     end
 
     it "returns true" do
@@ -65,8 +63,8 @@ RSpec.describe Yabeda::Datadog::Worker do
       allow(described_class::SEND).to receive(:call)
       allow(described_class::REGISTER).to receive(:call)
 
-      worker.enqueue(:send, {})
-      worker.enqueue(:register, {})
+      worker.enqueue(:SEND, {})
+      worker.enqueue(:REGISTER, {})
 
       expect(queue).not_to be_empty
       worker.stop

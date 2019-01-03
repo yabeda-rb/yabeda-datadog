@@ -61,7 +61,7 @@ module Yabeda
         while batch_size < self.class::BATCH_SIZE && actions_left?
           begin
             action_key, action_payload = dequeue_action
-            grouped_actions[action_key.upcase].push(action_payload) # TODO: we may remove this upcase method if store actions in as upcase as in Redux
+            grouped_actions[action_key].push(action_payload)
             batch_size += 1
           rescue ThreadError
             next
