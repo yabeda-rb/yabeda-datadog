@@ -7,14 +7,9 @@ module Yabeda
   module Datadog
     # = Perform actions async
     class Worker
-      BATCH_SIZE = 10
-      QUEUE_SIZE = 1000
-      NUM_THREADS = 2
-      SLEEP_INTERVAL = 3
-
-      def self.start(queue_size: QUEUE_SIZE)
+      def self.start(queue_size: Yabeda::Datadog.config.queue_size)
         instance = new(SizedQueue.new(queue_size))
-        instance.spawn_threads(NUM_THREADS)
+        instance.spawn_threads(Yabeda::Datadog.config.num_threads)
         instance
       end
 
@@ -32,7 +27,7 @@ module Yabeda
           threads << Thread.new do
             loop do
               dispatch_actions
-              sleep(rand(SLEEP_INTERVAL))
+              sleep(rand(Yabeda::Datadog.config.sleep_interval))
             end
           end
         end
@@ -58,7 +53,7 @@ module Yabeda
         grouped_actions = Hash.new { |hash, key| hash[key] = [] }
         batch_size = 0
 
-        while batch_size < self.class::BATCH_SIZE && actions_left?
+        while batch_size < Yabeda::Datadog.config.batch_size && actions_left?
           begin
             action_key, action_payload = dequeue_action
             grouped_actions[action_key].push(action_payload)

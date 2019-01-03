@@ -32,6 +32,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "dogapi"
   spec.add_dependency "dogstatsd-ruby"
   spec.add_dependency "yabeda"
+  spec.add_dependency "anyway_config", "~> 1.0"
 
   spec.add_development_dependency "bundler", "~> 1.17"
   spec.add_development_dependency "pry", "~> 0.12.2"

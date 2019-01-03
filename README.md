@@ -68,14 +68,37 @@ You can run a dogstats-d instance in a docker container with the following comma
 
     $ bin/dev
 
-Beware that the agent will collect metrics (a lot) from docker itself and your OS and  all launched docker containers. You have to provide `DD_API_KEY` in `.datadog-agent.env` file. You can put additional environment variable for Datadog agent container into this file
+Beware that the agent will collect metrics (a lot) from docker itself and your OS and  all launched docker containers. You have to provide `DATADOG_API_KEY` and `DATADOG_APP_KEY` in `.datadog-agent.env` file. You can put additional environment variable for Datadog agent container into this file
 
 Example of `.datadog-agent.env` file:
 
 ```
-DD_API_KEY=<your Datadog API key>
-DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
-DD_HOSTNAME=my-development-computer
+DATADOG_API_KEY=<your Datadog API key>
+DATADOG_APP_KEY=<your Datadog APP key>
+```
+
+Also you can specify your host and port for statsd server (default: localhost:8125): 
+
+```
+DATADOG_AGENT_HOST=localhost
+DATADOG_AGENT_PORT=8125
+```
+
+Worker settings:
+
+```
+DATADOG_BATCH_SIZE=10
+DATADOG_QUEUE_SIZE=1000
+DATADOG_NUM_THREADS=2
+DATADOG_SLEEP_INTERVAL=3
+```
+
+For this settings you can use yml. Just provide variables in config/datadog.yml
+
+Or setup it in your code: 
+
+```ruby
+  Yabeda::Datadog.config.api_key=<your Datadog API key>
 ```
 
 To install this gem onto your local machine, run:
