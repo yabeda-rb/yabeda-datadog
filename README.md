@@ -27,8 +27,13 @@ If a unit of a metric is not supported by Datadog, this unit will not be automat
 
 Refer to [Datadog metrics documentation](https://docs.datadoghq.com/graphing/metrics/) for working with your metrics in Datadog dashboard.
 
-Start your application. You have to set your `DATADOG_API_KEY` and `DATADOG_APP_KEY` as environment variables.
-You can obtain your Datadog API keys in [Datadog dashboard](https://app.datadoghq.com/account/settings#api).
+Start the adapter with the command:
+
+```ruby
+Yabeda::Datadog.start
+```
+
+You have to set your `DATADOG_API_KEY` and `DATADOG_APP_KEY` as environment variables. You can obtain your Datadog API keys in [Datadog dashboard](https://app.datadoghq.com/account/settings#api).
 
 You may specify `DATADOG_AGENT_HOST` and/or `DATADOG_AGENT_PORT` environment variables if your Datadog agent is run not in the same host as an app/code that you collection metrics.
 
@@ -37,9 +42,11 @@ To star collecting Yabeda collect blocks (aka collectors) run the command:
 ```ruby
 Yabeda::Datadog.start_exporter
 
-```
+# optionaly you can pass collect_interval argument
 
-You may specify `YABEDA_DATADOG_COLLECT_INTERVAL` environment variable to change default interval to call Yabeda collect blocks.
+ten_seconds = 10
+Yabeda::Datadog.start_exporter(collect_interval: ten_seconds)
+```
 
 ### Limitations
 
@@ -49,6 +56,10 @@ On the first run of your application no metrics metadata will be updated. This i
 
 [yabeda-datadog-sidekiq-example](https://github.com/shvetsovdm/yabeda-datadog-sidekiq-example)
 
+### Alternatives
+
+Using [Prometheus support for Datadog Agent 6](https://www.datadoghq.com/blog/monitor-prometheus-metrics/) with [yabeda-prometheus](https://github.com/yabeda-rb/yabeda-prometheus).
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -57,7 +68,15 @@ You can run a dogstats-d instance in a docker container with the following comma
 
     $ bin/dev
 
-Beware that the agent will collect metrics (a lot) from docker itself and your OS and  all launched docker containers.
+Beware that the agent will collect metrics (a lot) from docker itself and your OS and  all launched docker containers. You have to provide `DD_API_KEY` in `.datadog-agent.env` file. You can put additional environment variable for Datadog agent container into this file
+
+Example of `.datadog-agent.env` file:
+
+```
+DD_API_KEY=<your Datadog API key>
+DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+DD_HOSTNAME=my-development-computer
+```
 
 To install this gem onto your local machine, run:
 
