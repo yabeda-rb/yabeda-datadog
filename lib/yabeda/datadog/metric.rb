@@ -53,6 +53,20 @@ module Yabeda
       private
 
       attr_reader :metric, :overides
+
+      class << self
+        # Build Datadog histogram metrics from Yabeda histogram metric
+        def histogram_metrics(historgram)
+          [
+            new(historgram, "gauge", name_sufix: "avg"),
+            new(historgram, "gauge", name_sufix: "max"),
+            new(historgram, "gauge", name_sufix: "min"),
+            new(historgram, "gauge", name_sufix: "median"),
+            new(historgram, "gauge", name_sufix: "95percentile", unit: nil, per_unit: nil),
+            new(historgram, "rate", name_sufix: "count", unit: nil, per_unit: nil),
+          ]
+        end
+      end
     end
   end
 end

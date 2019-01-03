@@ -1,17 +1,22 @@
 # frozen_string_literal: true
 
+require "yabeda/datadog/worker/send"
+require "yabeda/datadog/worker/register"
+
 module Yabeda
   module Datadog
     # = Perform synchronous actions
     class Worker
-      QUEUE_SIZE = 100 # TODO: think twice about it
-      NUM_THREADS = 2 # TODO: think twice about it
-      SLEEP_INTERVAL = 5 # TODO: think twice about it
-      DEFAULT_AGENT_HOST = "localhost"
-      DEFAULT_AGENT_PORT = 8125
+      BATCH_SIZE = 10
+      QUEUE_SIZE = 1000
+      NUM_THREADS = 2
+      SLEEP_INTERVAL = 3
 
       def self.start(queue_size: QUEUE_SIZE)
+<<<<<<< HEAD
         Logger.instance.info "start worker"
+=======
+>>>>>>> aa2b4c9fe9bb173ecaf46ef54c8f1491205f13f9
         instance = new(SizedQueue.new(queue_size))
         instance.spawn_threads(NUM_THREADS)
         instance
@@ -24,7 +29,10 @@ module Yabeda
       end
 
       def enqueue(action, payload)
+<<<<<<< HEAD
         logger.info "enqueue action"
+=======
+>>>>>>> aa2b4c9fe9bb173ecaf46ef54c8f1491205f13f9
         queue.push([action, payload])
       end
 
@@ -45,7 +53,7 @@ module Yabeda
       end
 
       def stop
-        dispatch_actions
+        dispatch_actions until no_acitons?
         threads.each(&:exit)
         threads.clear
         true
@@ -56,6 +64,7 @@ module Yabeda
       attr_reader :queue, :threads, :logger
 
       def dispatch_actions
+<<<<<<< HEAD
         logger.info "going to dispatch actions in thread #{Thread.current.object_id}, queue size #{queue.size}"
         send = []
         register = []
@@ -86,8 +95,27 @@ module Yabeda
               end
             end
           end
+=======
+        grouped_actions = Hash.new { |hash, key| hash[key] = [] }
+        batch_size = 0
+
+        while batch_size < self.class::BATCH_SIZE && actions_left?
+          begin
+            action_key, action_payload = dequeue_action
+            grouped_actions[action_key].push(action_payload)
+            batch_size += 1
+          rescue ThreadError
+            next
+          end
         end
 
+        grouped_actions.each_pair do |group_key, group_payload|
+          self.class.const_get(group_key, false).call(group_payload)
+>>>>>>> aa2b4c9fe9bb173ecaf46ef54c8f1491205f13f9
+        end
+      end
+
+<<<<<<< HEAD
         if register.any?
           logger.info "updating next set of metrics in thread #{Thread.current.object_id}"
           dogapi = ::Dogapi::Client.new('b62b7b523bf06ec87743f8e29ed17569', ENV["DATADOG_APP_KEY"])
@@ -99,6 +127,10 @@ module Yabeda
             end
           end
         end
+=======
+      def actions_left?
+        !queue.empty?
+>>>>>>> aa2b4c9fe9bb173ecaf46ef54c8f1491205f13f9
       end
 
       def no_acitons?
@@ -106,7 +138,7 @@ module Yabeda
       end
 
       def dequeue_action
-        queue.pop
+        queue.pop(true)
       end
     end
   end

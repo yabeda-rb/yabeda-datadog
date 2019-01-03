@@ -4,6 +4,7 @@ require "yabeda"
 require "yabeda/datadog/adapter"
 require "yabeda/datadog/version"
 require "yabeda/datadog/logger"
+require "yabeda/datadog/exceptions"
 
 module Yabeda
   # = Namespace for DataDog adapter
@@ -11,8 +12,10 @@ module Yabeda
     SECOND = 1
     COLLECT_INTERVAL = 60 * SECOND
 
-    # TODO: consider to change too manual
     def self.start
+      raise ApiKeyError unless ENV["DATADOG_API_KEY"]
+      raise AppKeyError unless ENV["DATADOG_APP_KEY"]
+
       adapter = Yabeda::Datadog::Adapter.new
       Yabeda.register_adapter(:datadog, adapter)
       adapter

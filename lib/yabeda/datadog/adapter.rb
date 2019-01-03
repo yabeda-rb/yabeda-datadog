@@ -14,7 +14,7 @@ module Yabeda
 
     # = DataDog adapter.
     #
-    # Sends yabeda metrics as custom metrics to DataDog API.
+    # Sends yabeda metrics as custom metrics to DataDog.
     # https://docs.datadoghq.com/integrations/ruby/
     class Adapter < BaseAdapter
       def initialize(worker: Worker.start)
@@ -22,40 +22,35 @@ module Yabeda
       end
 
       def register_counter!(counter)
-        metric = Metric.new(counter, "count")
-        worker.enqueue(:register, metric: metric)
+        enqueue_register(Metric.new(counter, "count"))
       end
 
       def perform_counter_increment!(counter, tags, increment)
-        worker.enqueue(:send,
-                       metric: Metric.new(counter, "count"),
-                       value: increment,
-                       tags: Tags.build(tags),)
+        metric = Metric.new(counter, "count")
+        tags = Tags.build(tags)
+        enqueue_send(metric, increment, tags)
       end
 
       def register_gauge!(gauge)
-        metric = Metric.new(gauge, "gauge")
-        worker.enqueue(:register, metric: metric)
+        enqueue_register(Metric.new(gauge, "gauge"))
       end
 
       def perform_gauge_set!(gauge, tags, value)
-        worker.enqueue(:send,
-                       metric: Metric.new(gauge, "gauge"),
-                       value: value,
-                       tags: Tags.build(tags),)
+        metric = Metric.new(gauge, "gauge")
+        tags = Tags.build(tags)
+        enqueue_send(metric, value, tags)
       end
 
       def register_histogram!(histogram)
-        histogram_metrics(histogram).map do |historgam_sub_metric|
-          worker.enqueue(:register, metric: historgam_sub_metric)
+        Metric.histogram_metrics(histogram).map do |historgam_sub_metric|
+          enqueue_register(historgam_sub_metric)
         end
       end
 
       def perform_histogram_measure!(historam, tags, value)
-        worker.enqueue(:send,
-                       metric: Metric.new(historam, "histogram"),
-                       value: value,
-                       tags: Tags.build(tags),)
+        metric = Metric.new(historam, "histogram")
+        tags = Tags.build(tags)
+        enqueue_send(metric, value, tags)
       end
 
       def stop
@@ -66,15 +61,12 @@ module Yabeda
 
       attr_reader :worker
 
-      def histogram_metrics(historgram)
-        [
-          Metric.new(historgram, "gauge", name_sufix: "avg"),
-          Metric.new(historgram, "gauge", name_sufix: "max"),
-          Metric.new(historgram, "gauge", name_sufix: "min"),
-          Metric.new(historgram, "gauge", name_sufix: "median"),
-          Metric.new(historgram, "gauge", name_sufix: "95percentile", unit: nil, per_unit: nil),
-          Metric.new(historgram, "rate", name_sufix: "count", unit: nil, per_unit: nil),
-        ]
+      def enqueue_register(metric)
+        worker.enqueue(:REGISTER, metric: metric)
+      end
+
+      def enqueue_send(metric, value, tags)
+        worker.enqueue(:SEND, metric: metric, value: value, tags: tags)
       end
     end
   end
