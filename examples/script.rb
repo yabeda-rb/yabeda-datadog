@@ -7,6 +7,10 @@ Thread.abort_on_exception = true
 
 yabeda_datadog = Yabeda::Datadog.start
 
+# Make sure you start a datadog agent container with the command:
+#
+#   $ bin/dev
+#
 # To Use this script execute it directly with ruby command.
 # You have to provide DATADOG_API_KEY and DATADOG_APP_KEY
 # environment variables.
@@ -31,5 +35,6 @@ Yabeda.yabeda_datadog_gem_examples_script_rand_num.measure({ host: "dev_machine"
 finish_time = Time.now
 Yabeda.yabeda_datadog_gem_examples_script_run_time.set({ host: "dev_machine" }, finish_time - start_time)
 
-sleep(10)
+puts "Type exit for exit the script" until gets.chomp =~ /^exit$/i
+puts "Stoping Yabeda::Datadog, please wait ..."
 yabeda_datadog.stop
