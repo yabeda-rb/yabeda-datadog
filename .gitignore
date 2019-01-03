@@ -12,3 +12,6 @@
 
 # environment files
 .datadog-agent.env
+
+# Editors
+/.vscode/
