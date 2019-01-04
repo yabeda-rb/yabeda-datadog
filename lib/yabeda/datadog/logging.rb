@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'logger'
-require 'singleton'
+require "logger"
+require "singleton"
 
 module Yabeda
   module Datadog
@@ -13,14 +13,13 @@ module Yabeda
         @logger = Logger.new(STDOUT)
       end
 
-      def log_request(metric, &block)
-        begin
-          info "Sending #{metric.name} metric"
-          result = handle_result(yield)
-          info "Response on #{metric.name}: #{result}"
-        rescue StandardError => e  
-          fatal "Metric sending was failed: #{e.message}"
-        end
+      def log_request(metric)
+        info "Sending #{metric.name} metric"
+        response = yield
+        info "Response on #{metric.name}: #{handle_response(response)}"
+        response
+      rescue StandardError => e
+        fatal "Metric sending was failed: #{e.message}"
       end
 
       def warn(message)
@@ -49,13 +48,14 @@ module Yabeda
 
       private
 
-      def handle_result(res)
-        if res.is_a? Array
-          return res if res.count < 2
-          raise res[1]['errors'].join(', ') if res[1].has_key?('errors')
-          return "status: #{res[0]}, payload: #{res[1]}"
+      def handle_response(response)
+        if response.is_a? Array
+          return response if response.count < 2
+          raise response[1]["errors"].join(", ") if response[1].key?("errors")
+
+          return "status: #{response[0]}, payload: #{response[1]}"
         end
-        res 
+        response
       end
     end
   end
