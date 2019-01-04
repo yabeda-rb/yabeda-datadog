@@ -13,7 +13,7 @@ module Yabeda
       SLEEP_INTERVAL = 3
 
       def self.start(queue_size: QUEUE_SIZE)
-        Logger.instance.info "start worker"
+        Logging.instance.info "start worker"
         instance = new(SizedQueue.new(queue_size))
         instance.spawn_threads(NUM_THREADS)
         instance
@@ -22,11 +22,10 @@ module Yabeda
       def initialize(queue)
         @queue = queue
         @threads = []
-        @logger = Logger.instance
       end
 
       def enqueue(action, payload)
-        logger.info "enqueue action"
+        Logging.instance.info "enqueue action"
         queue.push([action, payload])
       end
 

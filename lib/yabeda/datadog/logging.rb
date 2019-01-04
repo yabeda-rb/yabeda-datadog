@@ -6,11 +6,11 @@ require 'singleton'
 module Yabeda
   module Datadog
     # = Perform loging
-    class Logger
+    class Logging
       include Singleton
 
       def initialize
-        @logger = ::Logger.new(STDOUT)
+        @logger = Logger.new(STDOUT)
       end
 
       def log_request(metric, &block)

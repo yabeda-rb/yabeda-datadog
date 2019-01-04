@@ -25,5 +25,5 @@ RSpec.configure do |config|
     Thread.abort_on_exception = prev_flag
   end
 
-  Yabeda::Datadog::Logger.instance.level = ::Logger::ERROR
+  Yabeda::Datadog::Logging.instance.level = Logger::ERROR
 end

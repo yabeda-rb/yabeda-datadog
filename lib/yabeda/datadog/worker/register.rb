@@ -8,7 +8,7 @@ module Yabeda
 
         accumulated_payload.each do |payload|
           metric = payload.fetch(:metric)
-          Logger.instance.log_request metric do
+          Logging.instance.log_request metric do
             metric.update(dogapi)
           end
         end
