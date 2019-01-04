@@ -8,8 +8,13 @@ module Yabeda
 
         accumulated_payload.each do |payload|
           metric = payload.fetch(:metric)
-          Logging.instance.log_request metric do
-            metric.update(dogapi)
+
+          begin
+            Logging.instance.log_request metric do
+              metric.update(dogapi)
+            end
+          rescue StandardError => e
+            Logging.instance.fatal "Metric sending failed: #{e.message}"
           end
         end
       end

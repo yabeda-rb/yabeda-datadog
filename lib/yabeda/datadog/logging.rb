@@ -18,8 +18,6 @@ module Yabeda
         response = yield
         info "Response on #{metric.name}: #{handle_response(response)}"
         response
-      rescue StandardError => e
-        fatal "Metric sending was failed: #{e.message}"
       end
 
       def warn(message)
