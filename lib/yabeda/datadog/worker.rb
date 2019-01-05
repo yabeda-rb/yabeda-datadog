@@ -26,12 +26,38 @@ module Yabeda
       def spawn_threads(num_threads)
         num_threads.times do
           threads << Thread.new do
-            loop do
-              dispatch_actions
-              sleep(rand(Yabeda::Datadog.config.sleep_interval))
+            grouped_actions = Hash.new { |hash, key| hash[key] = [] }
+
+            while running? || actions_left?
+              batch_size = 0
+              # wait for actions, blocks the current thread
+              action_key, action_payload = wait_for_action
+              if action_key
+                grouped_actions[action_key].push(action_payload)
+                batch_size += 1
+              end
+
+              # group a batch of actions
+              while batch_size < Yabeda::Datadog.config.batch_size
+                begin
+                  action_key, action_payload = dequeue_action
+                  grouped_actions[action_key].push(action_payload)
+                  batch_size += 1
+                rescue ThreadError
+                  break # exit batch loop if we drain the queue
+                end
+              end
+
+              # invoke actions in batches
+              grouped_actions.each_pair do |group_key, group_payload|
+                self.class.const_get(group_key, false).call(group_payload)
+              end
+
+              grouped_actions.clear
             end
           end
         end
+
         true
       end
 
@@ -40,7 +66,7 @@ module Yabeda
       end
 
       def stop
-        dispatch_actions until no_acitons?
+        queue.close
         threads.each(&:exit)
         threads.clear
         true
@@ -49,25 +75,6 @@ module Yabeda
       private
 
       attr_reader :queue, :threads, :logger
-
-      def dispatch_actions
-        grouped_actions = Hash.new { |hash, key| hash[key] = [] }
-        batch_size = 0
-
-        while batch_size < Yabeda::Datadog.config.batch_size && actions_left?
-          begin
-            action_key, action_payload = dequeue_action
-            grouped_actions[action_key].push(action_payload)
-            batch_size += 1
-          rescue ThreadError
-            next
-          end
-        end
-
-        grouped_actions.each_pair do |group_key, group_payload|
-          self.class.const_get(group_key, false).call(group_payload)
-        end
-      end
 
       def actions_left?
         !queue.empty?
@@ -79,6 +86,14 @@ module Yabeda
 
       def dequeue_action
         queue.pop(true)
+      end
+
+      def wait_for_action
+        queue.pop(false)
+      end
+
+      def running?
+        !queue.closed?
       end
     end
   end

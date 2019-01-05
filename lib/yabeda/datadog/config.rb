@@ -14,8 +14,7 @@ module Yabeda
                   agent_port: 8125,
                   batch_size: 10,
                   queue_size: 1000,
-                  num_threads: 2,
-                  sleep_interval: 3
+                  num_threads: 2
     end
   end
 end

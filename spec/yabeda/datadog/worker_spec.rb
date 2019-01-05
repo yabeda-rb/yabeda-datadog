@@ -43,7 +43,6 @@ RSpec.describe Yabeda::Datadog::Worker do
       worker.enqueue(:REGISTER, name: :a)
 
       worker.spawn_threads(3)
-      sleep(0.1)
 
       expect(described_class::SEND).to have_received(:call).with([{ a: 1 }, { b: 2 }])
       expect(described_class::REGISTER).to have_received(:call).with([{ name: :a }])
@@ -59,16 +58,10 @@ RSpec.describe Yabeda::Datadog::Worker do
     let(:worker) { described_class.new(queue) }
     let(:fake_thread) { instance_spy("Thread") }
 
-    it "empties worker's queue" do
-      allow(described_class::SEND).to receive(:call)
-      allow(described_class::REGISTER).to receive(:call)
-
-      worker.enqueue(:SEND, {})
-      worker.enqueue(:REGISTER, {})
-
-      expect(queue).not_to be_empty
+    it "close worker's queue" do
+      expect(queue).not_to be_closed
       worker.stop
-      expect(queue).to be_empty
+      expect(queue).to be_closed
     end
 
     it "terminates all threads" do
