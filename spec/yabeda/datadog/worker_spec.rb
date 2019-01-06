@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Yabeda::Datadog::Worker do
-  let(:num_threads) { described_class::NUM_THREADS }
+  let(:num_threads) { Yabeda::Datadog.config.num_threads }
 
   describe "::start" do
     it "create an instance an spawns it's treads" do
