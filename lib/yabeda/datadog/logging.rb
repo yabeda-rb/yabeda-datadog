@@ -13,13 +13,6 @@ module Yabeda
         @logger = Logger.new(STDOUT)
       end
 
-      def log_request(metric)
-        info "Sending #{metric.name} metric"
-        response = yield
-        info "Response on #{metric.name}: #{handle_response(response)}"
-        response
-      end
-
       def warn(message)
         @logger.warn message
       end
@@ -42,18 +35,6 @@ module Yabeda
 
       def level=(level)
         @logger.level = level
-      end
-
-      private
-
-      def handle_response(response)
-        if response.is_a? Array
-          return response if response.count < 2
-          raise response[1]["errors"].join(", ") if response[1].key?("errors")
-
-          return "status: #{response[0]}, payload: #{response[1]}"
-        end
-        response
       end
     end
   end

@@ -10,7 +10,7 @@ module Yabeda
           metric = payload.fetch(:metric)
 
           begin
-            Logging.instance.log_request metric do
+            ResponseHandler.call(metric) do
               metric.update(dogapi)
             end
           rescue StandardError => e
