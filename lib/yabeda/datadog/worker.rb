@@ -19,6 +19,7 @@ module Yabeda
       end
 
       def enqueue(action, payload)
+        Logging.instance.info "enqueue action"
         queue.push([action, payload])
       end
 
@@ -47,7 +48,7 @@ module Yabeda
 
       private
 
-      attr_reader :queue, :threads
+      attr_reader :queue, :threads, :logger
 
       def dispatch_actions
         grouped_actions = Hash.new { |hash, key| hash[key] = [] }
