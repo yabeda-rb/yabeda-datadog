@@ -4,7 +4,7 @@ module Yabeda
   module Datadog
     class Worker
       REGISTER = proc do |accumulated_payload|
-        dogapi = ::Dogapi::Client.new(ENV["DATADOG_API_KEY"], ENV["DATADOG_APP_KEY"])
+        dogapi = ::Dogapi::Client.new(Yabeda::Datadog.config.api_key, Yabeda::Datadog.config.app_key)
 
         accumulated_payload.each do |payload|
           metric = payload.fetch(:metric)

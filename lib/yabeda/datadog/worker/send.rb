@@ -3,13 +3,10 @@
 module Yabeda
   module Datadog
     class Worker
-      DEFAULT_AGENT_HOST = "localhost"
-      DEFAULT_AGENT_PORT = 8125
-
       SEND = proc do |accumulated_payload|
         dogstatsd = ::Datadog::Statsd.new(
-          ENV.fetch("DATADOG_AGENT_HOST", DEFAULT_AGENT_HOST),
-          ENV.fetch("DATADOG_AGENT_PORT", DEFAULT_AGENT_PORT),
+          ENV.fetch("DATADOG_AGENT_HOST", Yabeda::Datadog.config.agent_host),
+          ENV.fetch("DATADOG_AGENT_PORT", Yabeda::Datadog.config.agent_port),
         )
 
         dogstatsd.batch do |stats|

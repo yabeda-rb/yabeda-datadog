@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 2.3.0"
 
+  spec.add_dependency "anyway_config", "~> 1.0"
   spec.add_dependency "dogapi"
   spec.add_dependency "dogstatsd-ruby"
   spec.add_dependency "yabeda"
