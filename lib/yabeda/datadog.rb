@@ -14,19 +14,22 @@ module Yabeda
     SECOND = 1
     COLLECT_INTERVAL = 60 * SECOND
 
+    # Gem configuration object
     def self.config
       @config ||= Config.new
     end
 
+    # Prepare the adapter to work
     def self.start
-      raise ApiKeyError unless Yabeda::Datadog.config.api_key
-      raise AppKeyError unless Yabeda::Datadog.config.app_key
+      raise ApiKeyError unless config.api_key
+      raise AppKeyError unless config.app_key
 
       adapter = Yabeda::Datadog::Adapter.new
       Yabeda.register_adapter(:datadog, adapter)
       adapter
     end
 
+    # Start collection metrics from Yabeda collectors
     def self.start_exporter(collect_interval: COLLECT_INTERVAL)
       Thread.new do
         Logging.instance.info "initilize collectors harvest"

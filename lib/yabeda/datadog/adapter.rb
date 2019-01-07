@@ -9,9 +9,6 @@ require "dogapi"
 
 module Yabeda
   module Datadog
-    DEFAULT_AGENT_HOST = "localhost"
-    DEFAULT_AGENT_PORT = 8125
-
     # = DataDog adapter.
     #
     # Sends yabeda metrics as custom metrics to DataDog.
