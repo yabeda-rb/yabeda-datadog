@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-Have an instance of Datadog agent and dogstats-d running. For other installation options of Datadog agent please refer to [Datadog agent documentation](https://docs.datadoghq.com/agent/).
+Have an instance of Datadog agent and dogstats-d running. For installation options of Datadog agent please refer to [Datadog agent documentation](https://docs.datadoghq.com/agent/).
 
 ## Installation
 
@@ -20,22 +20,72 @@ And then execute:
 
 ## Usage
 
-Configure Yabeda metrics. Refer to [Yabeda documentation](https://github.com/yabeda-rb/yabeda) for instruction on how to configure and use Yabeda metrics.
+### Define metrics
 
-Please note when configuring Yabeda you have to use Datadog units. Refer to [Datadog unit for metrics documentation](https://docs.datadoghq.com/developers/metrics/#units).
-If a unit of a metric is not supported by Datadog, this unit will not be automatically updated. But you always have the ability to update it manually in Datadog metrics dashboard or by calling API by yourself.
+Define Yabeda metrics to collect. Refer to [Yabeda documentation](https://github.com/yabeda-rb/yabeda) for instruction on how to configure and use Yabeda metrics.
+
+Please note when configuring Yabeda you have to use [Datadog units](https://docs.datadoghq.com/developers/metrics/#units).
+If a unit of a metric is not supported by Datadog, unit information will not be submitted to Datadog. However, the rest of the metric information will be updated.
+You always have the ability to update it manually in Datadog metrics dashboard or by calling API by yourself.
 
 Refer to [Datadog metrics documentation](https://docs.datadoghq.com/graphing/metrics/) for working with your metrics in Datadog dashboard.
 
-Start the adapter with the command:
+### Configure the adapter
+
+You can configure with either `APP_ROOT/config/yabeda_datadog.yml` file or with environment variables.
+Rails 5.1 users able to use encrypted rails secrets `Rails.application.secrets.yabeda_datadog.*`.
+
+Example of `yabeda_datadog.yml` file:
+
+```
+# required
+api_key: <your Datadog API key>
+app_key: <your Datadog App key>
+
+# optional, default values used as an example
+# how many queued metrics metrics sends in batches
+batch_size: 10
+# how many metrics you can queue for sending
+queue_size: 1000
+# threads to sends enqueued metrics
+num_threads: 2
+# Datadog agent host and port
+agent_host: localhost
+agent_port: 8125
+```
+
+Example of environment variables:
+
+```
+# required
+YABEDA_DATADOG_API_KEY=<your Datadog API key>
+YABEDA_DATADOG_APP_KEY=<your Datadog App key>
+
+# optional, default values used as an example
+# how many queued metrics metrics sends in batches
+YABEDA_DATADOG_BATCH_SIZE=10
+# how many metrics you can queue for sending
+YABEDA_DATADOG_QUEUE_SIZE=1000
+# threads to sends enqueued metrics
+YABEDA_DATADOG_NUM_THREADS=2
+# Datadog agent host and port
+YABEDA_DATADOG_AGENT_HOST=localhost
+YABEDA_DATADOG_AGENT_PORT=8125
+```
+
+You can obtain your Datadog API keys in [Datadog dashboard](https://app.datadoghq.com/account/settings#api).
+
+Please note, when filling the queue (queue size option), your application will be blocked by waiting for a place in the queue.
+
+You may specify `DATADOG_AGENT_HOST` and/or `DATADOG_AGENT_PORT` environment variables if your Datadog agent is running not on the same host as an app/code that collects metrics.
+
+### Start the adapter
+
+To start collecting and sending your metrics to Datadog agent run:
 
 ```ruby
 Yabeda::Datadog.start
 ```
-
-You have to set your `DATADOG_API_KEY` and `DATADOG_APP_KEY` as environment variables. You can obtain your Datadog API keys in [Datadog dashboard](https://app.datadoghq.com/account/settings#api).
-
-You may specify `DATADOG_AGENT_HOST` and/or `DATADOG_AGENT_PORT` environment variables if your Datadog agent is run not in the same host as an app/code that you collection metrics.
 
 To star collecting Yabeda collect blocks (aka collectors) run the command:
 
@@ -44,8 +94,8 @@ Yabeda::Datadog.start_exporter
 
 # optionaly you can pass collect_interval argument
 
-ten_seconds = 10
-Yabeda::Datadog.start_exporter(collect_interval: ten_seconds)
+TEN_SECONDS = 10
+Yabeda::Datadog.start_exporter(collect_interval: TEN_SECONDS)
 ```
 
 ### Limitations
@@ -64,7 +114,7 @@ Using [Prometheus support for Datadog Agent 6](https://www.datadoghq.com/blog/mo
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-You can run a dogstats-d instance in a docker container with the following command:
+You can run a Datadog agent in a docker container with the following command:
 
     $ bin/dev
 
@@ -73,8 +123,10 @@ Beware that the agent will collect metrics (a lot) from docker itself and your O
 Example of `.datadog-agent.env` file:
 
 ```
+# required
 DD_API_KEY=<your Datadog API key>
 DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+# optinal
 DD_HOSTNAME=my-development-computer
 ```
 
