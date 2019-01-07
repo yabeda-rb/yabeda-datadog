@@ -110,37 +110,9 @@ On the first run of your application no metrics metadata will be updated. This i
 
 Using [Prometheus support for Datadog Agent 6](https://www.datadoghq.com/blog/monitor-prometheus-metrics/) with [yabeda-prometheus](https://github.com/yabeda-rb/yabeda-prometheus).
 
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-You can run a Datadog agent in a docker container with the following command:
-
-    $ bin/dev
-
-Beware that the agent will collect metrics (a lot) from docker itself and your OS and  all launched docker containers. You have to provide `DD_API_KEY` in `.datadog-agent.env` file. You can put additional environment variable for Datadog agent container into this file
-
-Example of `.datadog-agent.env` file:
-
-```shell
-# required
-DD_API_KEY=<your Datadog API key>
-DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
-# optinal
-DD_HOSTNAME=my-development-computer
-```
-
-To install this gem onto your local machine, run:
-
-    $ bundle exec rake install
-
-To release a new version, update the version number in `version.rb`, and then run:
-
-    $ bundle exec rake release
-
-Which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
 ## Contributing
+
+Please see [CONTRIBUTING guide](/CONTRIBUTING.md).
 
 Bug reports and pull requests are welcome on GitHub at [https://github.com/shvetsovdm/yabeda-datadog](https://github.com/shvetsovdm/yabeda-datadog).
 
