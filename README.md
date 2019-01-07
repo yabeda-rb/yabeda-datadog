@@ -37,7 +37,7 @@ Rails 5.1 users able to use encrypted rails secrets `Rails.application.secrets.y
 
 Example of `yabeda_datadog.yml` file:
 
-```
+```yaml
 # required
 api_key: <your Datadog API key>
 app_key: <your Datadog App key>
@@ -56,7 +56,7 @@ agent_port: 8125
 
 Example of environment variables:
 
-```
+```shell
 # required
 YABEDA_DATADOG_API_KEY=<your Datadog API key>
 YABEDA_DATADOG_APP_KEY=<your Datadog App key>
@@ -122,7 +122,7 @@ Beware that the agent will collect metrics (a lot) from docker itself and your O
 
 Example of `.datadog-agent.env` file:
 
-```
+```shell
 # required
 DD_API_KEY=<your Datadog API key>
 DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
