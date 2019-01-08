@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    yabeda-datadog (0.2.0)
+    yabeda-datadog (0.3.0.rc1)
       anyway_config (~> 1.0)
       dogapi
       dogstatsd-ruby
@@ -10,7 +10,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    anyway_config (1.4.1)
+    anyway_config (1.4.2)
     coderay (1.1.2)
     concurrent-ruby (1.1.4)
     diff-lcs (1.3)
