@@ -19,12 +19,18 @@ module Yabeda
       @config ||= Config.new
     end
 
-    # Prepare the adapter to work
-    def self.start
+    # Check the gem configuration has valid state
+    def self.ensure_configured
       raise ApiKeyError unless config.api_key
       raise AppKeyError unless config.app_key
+    end
 
-      adapter = Yabeda::Datadog::Adapter.new
+    # Prepare the adapter to work
+    def self.start
+      ensure_configured
+
+      worker = Yabeda::Datadog::Worker.start(config)
+      adapter = Yabeda::Datadog::Adapter.new(worker: worker)
       Yabeda.register_adapter(:datadog, adapter)
       adapter
     end

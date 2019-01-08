@@ -7,9 +7,10 @@ module Yabeda
   module Datadog
     # = Perform actions async
     class Worker
-      def self.start(queue_size: Yabeda::Datadog.config.queue_size)
-        instance = new(SizedQueue.new(queue_size))
-        instance.spawn_threads(Yabeda::Datadog.config.num_threads)
+      def self.start(config)
+        queue = SizedQueue.new(config.queue_size)
+        instance = new(queue)
+        instance.spawn_threads(config.num_threads)
         instance
       end
 

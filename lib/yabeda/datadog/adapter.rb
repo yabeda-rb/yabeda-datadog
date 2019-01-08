@@ -14,7 +14,7 @@ module Yabeda
     # Sends yabeda metrics as custom metrics to DataDog.
     # https://docs.datadoghq.com/integrations/ruby/
     class Adapter < BaseAdapter
-      def initialize(worker: Worker.start)
+      def initialize(worker:)
         @worker = worker
       end
 

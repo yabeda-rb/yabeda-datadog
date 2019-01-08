@@ -1,16 +1,24 @@
 # frozen_string_literal: true
 
 RSpec.describe Yabeda::Datadog::Worker do
-  let(:num_threads) { Yabeda::Datadog.config.num_threads }
+  let(:num_threads) { 2 }
+  let(:queue_size) { 10 }
+  let(:config) { instance_double("Yabeda::Datadog::Config", queue_size: queue_size, num_threads: num_threads) }
 
   describe "::start" do
-    it "create an instance an spawns it's treads" do
-      worker = instance_spy("Yabeda::Datadog::Worker")
+    let(:worker) { instance_spy("Yabeda::Datadog::Worker") }
+
+    before do
       allow(described_class).to receive(:new).and_return(worker)
+    end
 
-      instance = described_class.start
-
+    it "create an instance of worker" do
+      instance = described_class.start(config)
       expect(instance).to eq(worker)
+    end
+
+    it "spawns worker treads" do
+      described_class.start(config)
       expect(worker).to have_received(:spawn_threads).with(num_threads)
     end
   end
@@ -29,20 +37,23 @@ RSpec.describe Yabeda::Datadog::Worker do
     let(:queue) { Queue.new }
     let(:worker) { described_class.new(queue) }
 
+    before do
+      allow(described_class::SEND).to receive(:call)
+      allow(described_class::REGISTER).to receive(:call)
+    end
+
     it "spawns given number of therads" do
-      allow(Thread).to receive(:new)
       worker.spawn_threads(5)
-      expect(Thread).to have_received(:new).exactly(5).times
+      expect(worker.spawned_threads_count).to eq(5)
     end
 
     it "dispatches enqueued actions" do
-      allow(described_class::SEND).to receive(:call)
-      allow(described_class::REGISTER).to receive(:call)
       worker.enqueue(:SEND, a: 1)
       worker.enqueue(:SEND, b: 2)
       worker.enqueue(:REGISTER, name: :a)
 
-      worker.spawn_threads(3)
+      worker.spawn_threads(1)
+      sleep(0.1)
 
       expect(described_class::SEND).to have_received(:call).with([{ a: 1 }, { b: 2 }])
       expect(described_class::REGISTER).to have_received(:call).with([{ name: :a }])
