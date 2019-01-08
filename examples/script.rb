@@ -12,12 +12,12 @@ yabeda_datadog = Yabeda::Datadog.start
 #   $ bin/dev
 #
 # To Use this script execute it directly with ruby command.
-# You have to provide DATADOG_API_KEY and DATADOG_APP_KEY
+# You have to provide YABEDA_DATADOG_API_KEY and YABEDA_DATADOG_APP_KEY
 # environment variables.
 #
 # Example:
 #
-#   DATADOG_API_KEY=<your API key> DATADOG_APP_KEY=<your app key> ruby examples/script.rb
+#   YABEDA_DATADOG_API_KEY=<your API key> YABEDA_DATADOG_APP_KEY=<your app key> ruby examples/script.rb
 #
 
 Yabeda.configure do

@@ -77,7 +77,7 @@ You can obtain your Datadog API keys in [Datadog dashboard](https://app.datadogh
 
 Please note, when filling the queue (queue size option), your application will be blocked by waiting for a place in the queue.
 
-You may specify `DATADOG_AGENT_HOST` and/or `DATADOG_AGENT_PORT` environment variables if your Datadog agent is running not on the same host as an app/code that collects metrics.
+You may specify `YABEDA_DATADOG_AGENT_HOST` and/or `YABEDA_DATADOG_AGENT_PORT` environment variables if your Datadog agent is running not on the same host as an app/code that collects metrics.
 
 ### Start the adapter
 

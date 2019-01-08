@@ -5,8 +5,8 @@ module Yabeda
     class Worker
       SEND = proc do |accumulated_payload|
         dogstatsd = ::Datadog::Statsd.new(
-          ENV.fetch("DATADOG_AGENT_HOST", Yabeda::Datadog.config.agent_host),
-          ENV.fetch("DATADOG_AGENT_PORT", Yabeda::Datadog.config.agent_port),
+          Yabeda::Datadog.config.agent_host,
+          Yabeda::Datadog.config.agent_port,
         )
 
         dogstatsd.batch do |stats|

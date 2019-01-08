@@ -6,8 +6,8 @@ module Yabeda
   module Datadog
     # = Describes all config variables
     class Config < Anyway::Config
-      env_prefix :datadog
-      config_name :datadog
+      env_prefix :yabeda_datadog
+      config_name :yabeda_datadog
       attr_config :api_key,
                   :app_key,
                   agent_host: "localhost",
