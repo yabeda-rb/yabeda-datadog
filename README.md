@@ -52,6 +52,9 @@ num_threads: 2
 # Datadog agent host and port
 agent_host: localhost
 agent_port: 8125
+# Logging severity threshold, you have to pass integer related to Logger Ruby class
+# has 1 value by default which is Logger::INFO
+log_level: 1
 ```
 
 Example of environment variables:
@@ -71,6 +74,9 @@ YABEDA_DATADOG_NUM_THREADS=2
 # Datadog agent host and port
 YABEDA_DATADOG_AGENT_HOST=localhost
 YABEDA_DATADOG_AGENT_PORT=8125
+# Logging severity threshold, you have to pass integer related to Logger Ruby class
+# has 1 value by default which is Logger::INFO
+YABEDA_DATADOG_LOG_LEVEL=1
 ```
 
 You can obtain your Datadog API keys in [Datadog dashboard](https://app.datadoghq.com/account/settings#api).

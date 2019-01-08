@@ -14,7 +14,8 @@ module Yabeda
                   agent_port: 8125,
                   batch_size: 10,
                   queue_size: 1000,
-                  num_threads: 2
+                  num_threads: 2,
+                  log_level: Logger::INFO
     end
   end
 end
