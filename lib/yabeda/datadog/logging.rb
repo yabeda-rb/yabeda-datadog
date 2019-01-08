@@ -10,27 +10,27 @@ module Yabeda
       include Singleton
 
       def initialize
-        @logger = Logger.new(STDOUT)
+        @logger = Logger.new(STDOUT, progname: "yabeda_datadog")
       end
 
       def warn(message)
-        @logger.warn message
+        @logger.warn(message)
       end
 
       def info(message)
-        @logger.info message
+        @logger.info(message)
       end
 
       def debug(message)
-        @logger.debug message
+        @logger.debug(message)
       end
 
       def fatal(message)
-        @logger.fatal message
+        @logger.fatal(message)
       end
 
       def error(message)
-        @logger.error message
+        @logger.error(message)
       end
 
       def level=(level)
