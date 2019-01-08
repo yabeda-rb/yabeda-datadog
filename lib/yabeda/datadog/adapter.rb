@@ -59,10 +59,12 @@ module Yabeda
       attr_reader :worker
 
       def enqueue_register(metric)
+        Logging.instance.debug("enqueue REGISTER action for metric #{metric.name}")
         worker.enqueue(:REGISTER, metric: metric)
       end
 
       def enqueue_send(metric, value, tags)
+        Logging.instance.debug("enqueue SEND action for metric #{metric.name}")
         worker.enqueue(:SEND, metric: metric, value: value, tags: tags)
       end
     end

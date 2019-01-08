@@ -8,9 +8,13 @@ module Yabeda
     # = Perform actions async
     class Worker
       def self.start(config)
-        queue = SizedQueue.new(config.queue_size)
+        queue_size = config.queue_size
+        num_threads = config.num_threads
+        Logging.instance.info("start worker; queue size: #{queue_size}; threads #{num_threads} ")
+
+        queue = SizedQueue.new(queue_size)
         instance = new(queue)
-        instance.spawn_threads(config.num_threads)
+        instance.spawn_threads(num_threads)
         instance
       end
 
@@ -20,7 +24,6 @@ module Yabeda
       end
 
       def enqueue(action, payload)
-        Logging.instance.info "enqueue action"
         queue.push([action, payload])
       end
 
@@ -67,6 +70,7 @@ module Yabeda
       end
 
       def stop
+        Logging.instance.info("stop worker")
         queue.close
         threads.each(&:exit)
         threads.clear

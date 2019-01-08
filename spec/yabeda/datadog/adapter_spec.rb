@@ -3,7 +3,7 @@
 RSpec.describe Yabeda::Datadog::Adapter do
   let(:worker) { instance_spy("Yabeda::Datadog::Worker") }
   let(:adapter) { described_class.new(worker: worker) }
-  let(:metric) { instance_double("Yabeda::Datadog::Metric") }
+  let(:metric) { instance_double("Yabeda::Datadog::Metric", name: "some_metric") }
 
   describe "#register_counter!" do
     it "enqueued update a counter metric action" do

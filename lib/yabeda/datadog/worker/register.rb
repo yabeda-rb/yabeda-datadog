@@ -13,8 +13,8 @@ module Yabeda
             ResponseHandler.call(metric) do
               metric.update(dogapi)
             end
-          rescue StandardError => e
-            Logging.instance.fatal "Metric sending failed: #{e.message}"
+          rescue StandardError => err
+            Logging.instance.error("metric registration failed: #{err.message}")
           end
         end
       end

@@ -9,14 +9,19 @@ module Yabeda
           Yabeda::Datadog.config.agent_port,
         )
 
-        dogstatsd.batch do |stats|
-          accumulated_payload.each do |payload|
-            metric = payload.fetch(:metric)
-            value = payload.fetch(:value)
-            tags = payload.fetch(:tags)
+        Logging.instance.debug("sending batch of #{accumulated_payload.size} metrics")
+        begin
+          dogstatsd.batch do |stats|
+            accumulated_payload.each do |payload|
+              metric = payload.fetch(:metric)
+              value = payload.fetch(:value)
+              tags = payload.fetch(:tags)
 
-            stats.send(metric.type, metric.name, value, tags: tags)
+              stats.send(metric.type, metric.name, value, tags: tags)
+            end
           end
+        rescue StandardError => err
+          Logging.instance.error("metric sending failed: #{err.message}")
         end
       end
     end

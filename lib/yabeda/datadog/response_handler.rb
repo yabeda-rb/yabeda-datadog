@@ -6,9 +6,9 @@ module Yabeda
     class ResponseHandler
       class << self
         def call(metric)
-          Logging.instance.info "Sending #{metric.name} metric"
+          Logging.instance.debug("sending #{metric.name} metric")
           response = yield
-          Logging.instance.info "Response on #{metric.name}: #{handle(response)}"
+          Logging.instance.debug("response on #{metric.name}: #{handle(response)}")
           response
         end
 
