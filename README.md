@@ -11,7 +11,7 @@ Have an instance of Datadog agent and dogstats-d running. For installation optio
 Add to your application's Gemfile:
 
 ```ruby
-gem 'yabeda-datadog'
+gem "yabeda-datadog", "0.3.0.rc2"
 ```
 
 And then execute:
