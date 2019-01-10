@@ -106,7 +106,13 @@ Yabeda::Datadog.start_exporter(collect_interval: TEN_SECONDS)
 
 ### Limitations
 
-On the first run of your application no metrics metadata will be updated. This is happening because metrics have not yet been collected, thus not been created, and there is nothing to update.
+On the first run of your application you will see such error messages in your logs:
+
+    ERROR -- yabeda_datadog: metric registration failed for yourapp.some_metric: metric_name not found
+
+This is happening because metrics have not yet been collected and pushed to the DataDog (it may take up to the minute). So update metric metadata request to DataDog is failing.
+
+This error will disappear on next run when all metrics' data reach DataDog and DataDog will be aware of it.
 
 ### Example
 

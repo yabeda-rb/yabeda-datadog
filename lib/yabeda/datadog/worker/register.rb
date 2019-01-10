@@ -14,7 +14,7 @@ module Yabeda
               metric.update(dogapi)
             end
           rescue StandardError => err
-            Logging.instance.error("metric registration failed: #{err.message}")
+            Logging.instance.error("metric registration failed for #{metric.name}: #{err.message}")
           end
         end
       end
