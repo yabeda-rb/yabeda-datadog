@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    yabeda-datadog (0.3.0.rc2)
+    yabeda-datadog (0.3.0)
       anyway_config (~> 1.0)
       dogapi
       dogstatsd-ruby
