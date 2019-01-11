@@ -4,6 +4,7 @@ require "bundler/setup"
 require "yabeda/datadog"
 
 Thread.abort_on_exception = true
+Yabeda::Datadog.config.log_level = Logger::DEBUG
 
 yabeda_datadog = Yabeda::Datadog.start
 
