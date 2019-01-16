@@ -93,6 +93,8 @@ To start collecting and sending your metrics to Datadog agent run:
 Yabeda::Datadog.start
 ```
 
+**NOTE**: if you're using Ruby <2.5.2 you might encounter [a bug related to the process forking](https://bugs.ruby-lang.org/issues/14634) (e.g. when using Puma web server). The workaround is to start `Yabeda::Datadog` after the `fork` (e.g. when using Puma, put `Yabeda::Datadog.start` inside the `on_worker_boot` callback).
+
 To star collecting Yabeda collect blocks (aka collectors) run the command:
 
 ```ruby
