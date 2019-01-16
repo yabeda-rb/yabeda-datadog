@@ -38,7 +38,7 @@ Rails 5.1 users able to use encrypted rails secrets `Rails.application.secrets.y
 Example of `yabeda_datadog.yml` file:
 
 ```yaml
-# required
+# required (if missing adapter is no-op)
 api_key: <your Datadog API key>
 app_key: <your Datadog App key>
 
