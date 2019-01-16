@@ -60,7 +60,7 @@ log_level: 1
 Example of environment variables:
 
 ```shell
-# required
+# required (if missing adapter is no-op)
 YABEDA_DATADOG_API_KEY=<your Datadog API key>
 YABEDA_DATADOG_APP_KEY=<your Datadog App key>
 
