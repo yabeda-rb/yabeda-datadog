@@ -9,17 +9,23 @@ RSpec.describe Yabeda::Datadog do
     it "requires API key" do
       described_class.config.api_key = nil
       described_class.config.app_key = "qwe"
-      expect do
-        described_class.start
-      end.to raise_error(Yabeda::Datadog::ApiKeyError)
+
+      expect(Yabeda::Datadog::Logging.instance).to receive(:warn).with(/api key is missing/i)
+
+      described_class.start
+
+      expect(Yabeda.adapters[:datadog]).to be_nil
     end
 
     it "requires App key" do
       described_class.config.api_key = "qwe"
       described_class.config.app_key = nil
-      expect do
-        described_class.start
-      end.to raise_error(Yabeda::Datadog::AppKeyError)
+
+      expect(Yabeda::Datadog::Logging.instance).to receive(:warn).with(/application key is missing/i)
+
+      described_class.start
+
+      expect(Yabeda.adapters[:datadog]).to be_nil
     end
   end
 
