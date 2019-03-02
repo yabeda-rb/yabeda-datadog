@@ -6,6 +6,9 @@ module Yabeda
   module Datadog
     # = Internal adapter representation of metrics
     class Metric
+      SECOND = 1
+      DEFAULT_FLUSH_INTERVAL = SECOND * 10
+
       def initialize(metric, type, overides = {})
         @metric = metric
         @type = type
@@ -22,6 +25,7 @@ module Yabeda
           short_name: name,
           unit: unit,
           per_unit: per_unit,
+          statsd_interval: statsd_interval,
         }
       end
 
@@ -43,6 +47,11 @@ module Yabeda
       # Datadog API argument
       def per_unit
         overides.fetch(:per_unit, Unit.find(metric.per))
+      end
+
+      # Datadog API argument
+      def statsd_interval
+        DEFAULT_FLUSH_INTERVAL if type == "rate"
       end
 
       # Update metric metadata

@@ -19,7 +19,7 @@ module Yabeda
       end
 
       def register_counter!(counter)
-        enqueue_register(Metric.new(counter, "count"))
+        enqueue_register(Metric.new(counter, "rate"))
       end
 
       def perform_counter_increment!(counter, tags, increment)
