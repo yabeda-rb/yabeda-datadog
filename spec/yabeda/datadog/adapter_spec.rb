@@ -8,7 +8,7 @@ RSpec.describe Yabeda::Datadog::Adapter do
   describe "#register_counter!" do
     it "enqueued update a counter metric action" do
       yabeda_metric = instance_double("Yabeda::Counter")
-      allow(Yabeda::Datadog::Metric).to receive(:new).with(yabeda_metric, "count").and_return(metric)
+      allow(Yabeda::Datadog::Metric).to receive(:new).with(yabeda_metric, "rate").and_return(metric)
       adapter.register_counter!(yabeda_metric)
       expect(worker).to have_received(:enqueue).with(:REGISTER, metric: metric)
     end
