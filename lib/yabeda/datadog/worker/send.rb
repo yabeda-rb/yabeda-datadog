@@ -8,7 +8,7 @@ module Yabeda
           dogstatsd = ::Datadog::Statsd.new(
             Yabeda::Datadog.config.agent_host,
             Yabeda::Datadog.config.agent_port,
-            **dogstatsd_options,
+            single_thread: true,
           )
 
           Logging.instance.debug("sending batch of #{accumulated_payload.size} metrics")
@@ -28,20 +28,6 @@ module Yabeda
         ensure
           dogstatsd.close
         end
-      end
-      
-      def self.dogstatsd_options
-        @dogstatsd_options ||= dogstatsd_version >= Gem::Version.new("5.2") ? { single_thread: true } : {}
-      end
-
-      def self.dogstatsd_version
-        return @dogstatsd_version if instance_variable_defined?(:@dogstatsd_version)
-  
-        @dogstatsd_version = (
-          defined?(Datadog::Statsd::VERSION) &&
-            Datadog::Statsd::VERSION &&
-            Gem::Version.new(Datadog::Statsd::VERSION)
-        ) || Gem.loaded_specs['dogstatsd-ruby']&.version
       end
     end
   end

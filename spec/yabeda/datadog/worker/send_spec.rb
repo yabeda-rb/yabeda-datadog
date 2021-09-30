@@ -6,12 +6,7 @@ RSpec.describe Yabeda::Datadog::Worker::SEND do
 
   let(:statsd_client) { instance_spy(Datadog::Statsd) }
   let(:statsd_client_options) do
-    # This tests is run with both ~> 4.0 and latest dogstatsd-ruby.
-    if Gem::Version.new(Datadog::Statsd::VERSION) >= Gem::Version.new("5.2.0")
-      { single_thread: true }
-    else
-      {}
-    end
+    { single_thread: true }
   end
 
   before do
