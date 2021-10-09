@@ -22,19 +22,22 @@ yabeda_datadog = Yabeda::Datadog.start
 #
 
 Yabeda.configure do
-  group :yabeda_datadog_gem_examples_script
-  counter :run_count, comment: "The total number of times the script was executed", unit: "time"
-  gauge :run_time, comment: "Script execution time", unit: "second"
-  histogram :rand_num, comment: "Random number", buckets: [0, 20, 40, 60, 80, 100]
+  group :yabeda_datadog_gem_examples_script do
+    counter :run_count, comment: "The total number of times the script was executed", unit: "time"
+    gauge :run_time, comment: "Script execution time", unit: "second"
+    histogram :rand_num, comment: "Random number", buckets: [0, 20, 40, 60, 80, 100]
+  end
 end
 
+Yabeda.configure!
+
 start_time = Time.now
-Yabeda.yabeda_datadog_gem_examples_script_run_count.increment(host: "dev_machine")
-Yabeda.yabeda_datadog_gem_examples_script_rand_num.measure({ host: "dev_machine", rand: true }, rand(100))
-Yabeda.yabeda_datadog_gem_examples_script_rand_num.measure({ host: "dev_machine", rand: true }, rand(100))
-Yabeda.yabeda_datadog_gem_examples_script_rand_num.measure({ host: "dev_machine", rand: true }, rand(100))
+Yabeda.yabeda_datadog_gem_examples_script.run_count.increment({ host: "dev_machine" }, by: 1)
+Yabeda.yabeda_datadog_gem_examples_script.rand_num.measure({ host: "dev_machine", rand: true }, rand(100))
+Yabeda.yabeda_datadog_gem_examples_script.rand_num.measure({ host: "dev_machine", rand: true }, rand(100))
+Yabeda.yabeda_datadog_gem_examples_script.rand_num.measure({ host: "dev_machine", rand: true }, rand(100))
 finish_time = Time.now
-Yabeda.yabeda_datadog_gem_examples_script_run_time.set({ host: "dev_machine" }, finish_time - start_time)
+Yabeda.yabeda_datadog_gem_examples_script.run_time.set({ host: "dev_machine" }, finish_time - start_time)
 
 puts "Type exit for exit the script" until gets.chomp =~ /^exit$/i
 puts "Stoping Yabeda::Datadog, please wait ..."
