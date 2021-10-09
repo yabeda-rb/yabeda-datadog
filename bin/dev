@@ -2,10 +2,21 @@
 
 set -e
 
-docker run --rm \
-  --env-file .datadog-agent.env \
+echo "Starting datadog/agent docker container"
+
+ENV_FILE=".datadog-agent.env"
+
+if ! test -f "$ENV_FILE"; then
+    echo "$ENV_FILE does not exists."
+    echo "You can use $ENV_FILE.example to create $ENV_FILE file for datadog agent container."
+    exit 1
+fi
+
+docker run --name dd-agent \
+  --rm \
+  --env-file $ENV_FILE \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
   -v /proc/:/host/proc/:ro \
   -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro \
   -p 8125:8125/udp \
-  datadog/agent:latest
+  gcr.io/datadoghq/agent:7
