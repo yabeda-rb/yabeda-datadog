@@ -2,6 +2,6 @@
 
 module Yabeda
   module Datadog
-    VERSION = "0.3.5"
+    VERSION = "0.3.6.rc1"
   end
 end
