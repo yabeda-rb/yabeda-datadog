@@ -7,14 +7,14 @@ require "yabeda/datadog/version"
 Gem::Specification.new do |spec|
   spec.name          = "yabeda-datadog"
   spec.version       = Yabeda::Datadog::VERSION
-  spec.authors       = ["Dmitry Shvetsov <@shvetsovdm>"]
+  spec.authors       = ["Dmitry Shvetsov <@dmshvetsov>"]
   spec.email         = ["shvetsovdm@gmail.com"]
 
   spec.summary       = "DataDog adapter for reporting metrics from Yabeda suite"
   spec.description = <<~DESCRIPTION
     Adapter for reporting custom metrics from Yabeda to DataDog.
   DESCRIPTION
-  spec.homepage      = "https://github.com/shvetsovdm/yabeda-datadog"
+  spec.homepage      = "https://github.com/yabeda-rb/yabeda-datadog"
   spec.license       = "MIT"
 
   spec.metadata["homepage_uri"] = spec.homepage
